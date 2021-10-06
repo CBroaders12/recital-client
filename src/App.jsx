@@ -6,17 +6,13 @@ import Landing from './components/Landing/Landing';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 
-const darkTheme = createTheme({
-  palette: {
-    mode: 'dark',
-  },
-});
+// const darkTheme = createTheme({
+//   palette: {
+//     mode: 'dark',
+//   },
+// });
 
-const lightTheme = createTheme({
-  palette: {
-    mode: 'light',
-  },
-});
+const lightTheme = createTheme();
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token') || null);

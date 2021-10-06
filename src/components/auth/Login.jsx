@@ -8,27 +8,24 @@ import {
   InputLabel,
   Typography,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
+import { styled } from '@mui/material/styles';
 
-const useStyles = makeStyles((theme) => ({
-  form: {
-    backgroundColor: theme.palette.background.paper,
-    margin: theme.spacing(8),
-    padding: theme.spacing(4),
-    boxShadow: theme.shadows[10],
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  inputField: {
-    margin: theme.spacing(2),
-  },
+const StyledForm = styled('form')(({ theme }) => ({
+  backgroundColor: theme.palette.background.paper,
+  margin: theme.spacing(8),
+  padding: theme.spacing(4),
+  boxShadow: theme.shadows[10],
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
+
+const StyledField = styled(FormControl)(({ theme }) => ({
+  margin: theme.spacing(2),
 }));
 
 const Login = (props) => {
-  const classes = useStyles();
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -70,11 +67,11 @@ const Login = (props) => {
   if (props.token) return <Redirect to='/' />;
   return (
     <Container fixed maxWidth='sm'>
-      <form onSubmit={handleLogin} className={classes.form}>
+      <StyledForm onSubmit={handleLogin}>
         <Typography variant='h4' gutterBottom>
           Login
         </Typography>
-        <FormControl className={classes.inputField}>
+        <StyledField>
           <InputLabel htmlFor='email'>Email Address</InputLabel>
           <Input
             name='email'
@@ -83,8 +80,8 @@ const Login = (props) => {
             value={email}
             onChange={handleEmailChange}
           />
-        </FormControl>
-        <FormControl className={classes.inputField}>
+        </StyledField>
+        <StyledField>
           <InputLabel htmlFor='password'>Password</InputLabel>
           <Input
             name='password'
@@ -93,7 +90,7 @@ const Login = (props) => {
             value={password}
             onChange={handlePasswordChange}
           />
-        </FormControl>
+        </StyledField>
         <Button type='submit' variant='contained' color='primary'>
           Login
         </Button>
@@ -101,7 +98,7 @@ const Login = (props) => {
           Don't have an account? <Link to='/register'>Register</Link>
         </p>
         {error ? <p>{error}</p> : null}
-      </form>
+      </StyledForm>
     </Container>
   );
 };
