@@ -12,6 +12,12 @@ const darkTheme = createTheme({
   },
 });
 
+const lightTheme = createTheme({
+  palette: {
+    mode: 'light',
+  },
+});
+
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token') || null);
   const [baseUrl] = useState('http://localhost:4200/api/v1');
@@ -24,7 +30,7 @@ function App() {
   return (
     <Router>
       <CssBaseline />
-      <ThemeProvider theme={darkTheme}>
+      <ThemeProvider theme={lightTheme}>
         <Switch>
           <Route path='/' exact>
             <Landing token={token} />
