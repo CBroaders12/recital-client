@@ -6,17 +6,28 @@ import Landing from './components/Landing/Landing';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 
-// const darkTheme = createTheme({
-//   palette: {
-//     mode: 'dark',
-//   },
-// });
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+  },
+});
 
 const lightTheme = createTheme();
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token') || null);
   const [baseUrl] = useState('http://localhost:4200/api/v1');
+  const [displayDarkTheme, setDisplayDarkTheme] = useState(false);
+  const [currentTheme, setCurrentTheme] = useState(lightTheme);
+
+  const toggleTheme = () => {
+    if (displayDarkTheme) {
+      setCurrentTheme(lightTheme);
+    } else {
+      setCurrentTheme(darkTheme);
+    }
+    setDisplayDarkTheme(!displayDarkTheme);
+  };
 
   const updateToken = (newToken) => {
     setToken(newToken);
@@ -26,10 +37,14 @@ function App() {
   return (
     <Router>
       <CssBaseline />
-      <ThemeProvider theme={lightTheme}>
+      <ThemeProvider theme={currentTheme}>
         <Switch>
           <Route path='/' exact>
-            <Landing token={token} />
+            <Landing
+              token={token}
+              toggleTheme={toggleTheme}
+              isDark={displayDarkTheme}
+            />
           </Route>
           <Route path='/login' exact>
             <Login updateToken={updateToken} url={baseUrl} token={token} />
