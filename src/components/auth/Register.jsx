@@ -97,6 +97,7 @@ const Register = (props) => {
             name='password'
             id='password'
             type='password'
+            pattern='^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$'
             value={password}
             onChange={handlePasswordChange}
           />
