@@ -1,5 +1,6 @@
 import React, { useState, useReducer } from 'react';
 import { Link, Redirect } from 'react-router-dom';
+import { formReducer } from '../../lib/reducers';
 import {
   Button,
   Container,
@@ -9,7 +10,6 @@ import {
   Typography,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { formReducer } from '../../lib/reducers';
 
 const StyledForm = styled('form')(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,

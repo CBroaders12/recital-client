@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useReducer } from 'react';
 import { Link, Redirect } from 'react-router-dom';
+import { formReducer } from '../../lib/reducers';
 import {
   Container,
   FormControl,
@@ -26,28 +27,38 @@ const StyledField = styled(FormControl)(({ theme }) => ({
   width: '100%',
 }));
 
+const initalFormState = {
+  email: '',
+  password: '',
+  cPassword: '',
+};
+
 const Register = (props) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [cPassword, setCPassword] = useState('');
+  const [formState, dispatch] = useReducer(formReducer, initalFormState);
   const [error, setError] = useState('');
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
+  const handleInputChange = (e) => {
+    dispatch({
+      type: 'HANDLE INPUT',
+      field: e.target.name,
+      payload: e.target.value,
+    });
   };
 
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
-
-  const handleCPasswordChange = (e) => {
-    setCPassword(e.target.value);
+  const resetForm = () => {
+    for (let key in formState) {
+      dispatch({
+        type: 'RESET INPUT',
+        field: key,
+      });
+    }
+    setError('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (cPassword === password) {
+    if (formState.cPassword === formState.password) {
       setError('');
 
       const response = await fetch(`${props.url}/users/register`, {
@@ -55,17 +66,14 @@ const Register = (props) => {
         headers: new Headers({
           'Content-Type': 'application/json',
         }),
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(formState),
       });
 
       const json = await response.json();
 
       if (json.status === 'success') {
+        resetForm();
         props.updateToken(json.data.token);
-
-        setEmail('');
-        setPassword('');
-        setCPassword('');
       } else {
         setError(json.data.message);
       }
@@ -87,8 +95,8 @@ const Register = (props) => {
             name='email'
             id='email'
             type='email'
-            value={email}
-            onChange={handleEmailChange}
+            value={formState.email}
+            onChange={(e) => handleInputChange(e)}
           />
         </StyledField>
         <StyledField>
@@ -98,8 +106,8 @@ const Register = (props) => {
             id='password'
             type='password'
             pattern='^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$'
-            value={password}
-            onChange={handlePasswordChange}
+            value={formState.password}
+            onChange={(e) => handleInputChange(e)}
           />
         </StyledField>
         <StyledField>
@@ -108,8 +116,8 @@ const Register = (props) => {
             name='cPassword'
             id='cPassword'
             type='password'
-            value={cPassword}
-            onChange={handleCPasswordChange}
+            value={formState.cPassword}
+            onChange={(e) => handleInputChange(e)}
           />
         </StyledField>
         <Button type='submit' variant='contained' color='primary'>
