@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useReducer } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import {
   Button,
@@ -9,6 +9,7 @@ import {
   Typography,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { formReducer } from '../../lib/reducers';
 
 const StyledForm = styled('form')(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
@@ -25,17 +26,31 @@ const StyledField = styled(FormControl)(({ theme }) => ({
   margin: theme.spacing(2),
 }));
 
+const initalFormState = {
+  email: '',
+  password: '',
+};
+
 const Login = (props) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [formState, dispatch] = useReducer(formReducer, initalFormState);
   const [error, setError] = useState('');
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
+  const handleInputChange = (e) => {
+    dispatch({
+      type: 'HANDLE INPUT',
+      field: e.target.name,
+      payload: e.target.value,
+    });
   };
 
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
+  const resetForm = () => {
+    for (let key in formState) {
+      dispatch({
+        type: 'RESET INPUT',
+        field: key,
+      });
+    }
+    setError('');
   };
 
   const handleLogin = async (e) => {
@@ -47,15 +62,13 @@ const Login = (props) => {
         headers: new Headers({
           'Content-Type': 'application/json',
         }),
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(formState),
       });
       let json = await response.json();
 
       if (json.status === 'success') {
+        resetForm();
         props.updateToken(json.data.token);
-
-        setEmail('');
-        setPassword('');
       } else {
         setError(json.data.message);
       }
@@ -77,8 +90,8 @@ const Login = (props) => {
             name='email'
             id='email'
             type='email'
-            value={email}
-            onChange={handleEmailChange}
+            value={formState.email}
+            onChange={(e) => handleInputChange(e)}
           />
         </StyledField>
         <StyledField>
@@ -88,8 +101,8 @@ const Login = (props) => {
             id='password'
             type='password'
             pattern='^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$'
-            value={password}
-            onChange={handlePasswordChange}
+            value={formState.password}
+            onChange={(e) => handleInputChange(e)}
           />
         </StyledField>
         <Button type='submit' variant='contained' color='primary'>
